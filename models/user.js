@@ -41,6 +41,30 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    targetRole: {
+      type: String,
+      default: null,
+    },
+    currentSkills: {
+      type: [String],
+      default: [],
+    },
+    roadmap: [
+      {
+        skill: String,
+        description: String,
+        resources: [String],
+        status: {
+          type: String,
+          enum: ["pending", "in-progress", "completed"],
+          default: "pending",
+        },
+      },
+    ],
+    progress: {
+      type: Number,
+      default: 0, // % completed
+    },
   },
   {
     timestamps: true,
@@ -50,17 +74,16 @@ const userSchema = new mongoose.Schema(
 userSchema.methods.getJWT = async function () {
   const user = this;
   const token = await jwt.sign({ _id: user._id }, "Skill@Sync$790", {
-    expiresIn: "7d",
+    expiresIn: "8d",
   });
   return token;
 };
 
-
-userSchema.methods.validatePassword = async function(password) {
-  const user = this
-  const passwordHash = user.password
-  const isPasswordValid = await bcrypt.compare(password,passwordHash);
-  return isPasswordValid
-}
+userSchema.methods.validatePassword = async function (password) {
+  const user = this;
+  const passwordHash = user.password;
+  const isPasswordValid = await bcrypt.compare(password, passwordHash);
+  return isPasswordValid;
+};
 
 module.exports = mongoose.model("User", userSchema);
