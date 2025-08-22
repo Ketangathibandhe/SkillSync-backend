@@ -1,9 +1,7 @@
-const fetch = require("node-fetch"); // npm install node-fetch@2
-
 const GEMINI_API_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
-//  Helper: Skill Gap Analysis
+// Helper: Skill Gap Analysis
 const getSkillGapFromModel = async (targetRole, currentSkills) => {
   const prompt = `
     Analyze the skill gap for someone aiming to become a ${targetRole}.
@@ -43,7 +41,7 @@ const analyzeSkillGap = async (req, res) => {
   }
 };
 
-//  API 2: Roadmap (auto-fetches skill gap)
+// API 2: Roadmap (auto-fetches skill gap)
 const generateRoadmap = async (req, res) => {
   try {
     const { targetRole, currentSkills } = req.body;
