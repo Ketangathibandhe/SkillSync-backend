@@ -1,6 +1,7 @@
 const express = require("express");
 const profileRouter = express.Router();
 const { userAuth } = require("../middleware/auth");
+
 const User = require("../models/user");
 
 profileRouter.post("/set-role", userAuth, async (req, res) => {

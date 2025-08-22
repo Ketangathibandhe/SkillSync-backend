@@ -20,11 +20,11 @@ authRouter.post("/signup", async (req, res) => {
     const savedUser = await user.save();
     const token = await savedUser.getJWT();
     res.cookie("token", token, {
-  httpOnly: true,
-  secure: true, // sirf https par chalega
-  sameSite: "strict",
-  expires: new Date(Date.now() + 8 * 3600000),
-});
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
 
     res.json({ message: "User added successfully!", data: savedUser });
   } catch (error) {
@@ -40,28 +40,28 @@ authRouter.post("/login", async (req, res) => {
     if (!user) {
       throw new Error("Invalid credential");
     }
-   const isPasswordValid = await user.validatePassword(
-    password
-   )
-   if(isPasswordValid){
-    const token = await user.getJWT();
-    res.cookie("token",token,{
-      expires:new Date(Date.now()+8*3600000),
-    })
-    res.json({message:"loggedin...",user})
-   }else{
-    throw new Error("Invalid credentials...")
-   }
+    const isPasswordValid = await user.validatePassword(password);
+    if (isPasswordValid) {
+      const token = await user.getJWT();
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000),
+      });
+      res.json({ message: "loggedin...", user });
+    } else {
+      throw new Error("Invalid credentials...");
+    }
   } catch (error) {
     res.status(400).send("Something went wrong...." + error.message);
   }
 });
 
-authRouter.post('/logout',async(req,res)=>{
+authRouter.post("/logout", async (req, res) => {
   try {
-    res.cookie('token',null,{expires:new Date(Date.now())}).send("Logged out successfully..")
+    res
+      .cookie("token", null, { expires: new Date(Date.now()) })
+      .send("Logged out successfully..");
   } catch (error) {
-    res.status(400).send("something went wrong "+error.message)
+    res.status(400).send("something went wrong " + error.message);
   }
-})
+});
 module.exports = authRouter;
