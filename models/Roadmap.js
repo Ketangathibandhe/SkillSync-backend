@@ -1,17 +1,39 @@
 const mongoose = require("mongoose");
+
 const RoadmapSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
-  targetRole: String,
-  timePerDayHours: Number,
-  phases: [{
-    title: String,
-    durationWeeks: Number,
-    topics: [{
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  targetRole: {
+    type: String,
+    required: true,
+  },
+  currentSkills: {
+    type: [String],
+    default: [],
+  },
+  missingSkills: {
+    type: String,
+    required: true,
+  },
+  roadmap: [
+    {
       skill: String,
-      objectives: [String],
-      resources: [{ title: String, url: String, type: String }]
-    }],
-    checkpoint: String
-  }]
+      description: String,
+      resources: [String],
+      status: {
+        type: String,
+        enum: ["pending", "in-progress", "completed"],
+        default: "pending",
+      },
+    },
+  ],
+  progress: {
+    type: Number,
+    default: 0,
+  },
 }, { timestamps: true });
+
 module.exports = mongoose.model("Roadmap", RoadmapSchema);
