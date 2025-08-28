@@ -36,35 +36,35 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
-    role: {
-      type: String,
-      enum: ["user", "admin"],
-      default: "user",
-    },
-    targetRole: {
-      type: String,
-      default: null,
-    },
-    currentSkills: {
-      type: [String],
-      default: [],
-    },
-    roadmap: [
-      {
-        skill: String,
-        description: String,
-        resources: [String],
-        status: {
-          type: String,
-          enum: ["pending", "in-progress", "completed"],
-          default: "pending",
-        },
-      },
-    ],
-    progress: {
-      type: Number,
-      default: 0, // % completed
-    },
+    // role: {
+    //   type: String,
+    //   enum: ["user", "admin"],
+    //   default: "user",
+    // },
+    // targetRole: {
+    //   type: String,
+    //   default: null,
+    // },
+    // currentSkills: {
+    //   type: [String],
+    //   default: [],
+    // },
+    // roadmap: [
+    //   {
+    //     skill: String,
+    //     description: String,
+    //     resources: [String],
+    //     status: {
+    //       type: String,
+    //       enum: ["pending", "in-progress", "completed"],
+    //       default: "pending",
+    //     },
+    //   },
+    // ],
+    // progress: {
+    //   type: Number,
+    //   default: 0, // % completed
+    // },
   },
   {
     timestamps: true,
