@@ -7,18 +7,23 @@ const cookieParser = require("cookie-parser");
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-
-// 🔹 Routes import
+const cors = require("cors");
+app.use(cors({
+  origin:"http://localhost:5173",
+   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  credentials:true,
+}))
+//  Routes import
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
-const aiRoutes = require("./routes/ai.routes"); // ✅ Correct path
+const aiRoutes = require("./routes/ai.routes");
 
-// 🔹 Routes use
+//  Routes use
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/ai", aiRoutes);
 
-// 🔹 DB connect + Server run
+//  DB connect + Server run
 connectDB()
   .then(() => {
     console.log("Database connection established...");

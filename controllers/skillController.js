@@ -4,14 +4,14 @@ const Roadmap = require("../models/roadmap");
 const GEMINI_API_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
-// 🔹 Helper: Skill Gap Analysis
+// Helper: Skill Gap Analysis
 const getSkillGapFromModel = async (targetRole, currentSkills) => {
   const prompt = `
 Analyze the skill gap for someone aiming to become a ${targetRole}.
 Current skills: ${currentSkills.join(", ")}.
 List ONLY the missing skills and suggest learning priorities.
-🔹 Give the answer in a clear, concise bullet-point format.
-🔹 Start directly with the list of missing skills — no introduction, no extra sentences.
+- Give the answer in a clear, concise bullet-point format.
+- Start directly with the list of missing skills — no introduction, no extra sentences.
 `;
 
   const response = await fetch(
@@ -29,14 +29,14 @@ List ONLY the missing skills and suggest learning priorities.
   return data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
 };
 
-// 🔹 Helper: Roadmap Generation (with bulletproof parsing)
+// Helper: Roadmap Generation (with bulletproof parsing)
 const getRoadmapFromModel = async (targetRole, skillGap) => {
   const prompt = `
 Create a **comprehensive and detailed learning roadmap** for becoming a ${targetRole}.
 Base it on the following skill gap:
 ${skillGap}
 
-✅ Important instructions:
+ Important instructions:
 - Respond ONLY with valid JSON (no backticks, no markdown, no explanation).
 - Include at least 6-8 steps (phases).
 - Each step should have:
@@ -78,7 +78,7 @@ Format strictly like this:
   const data = await response.json();
   let rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
 
-  // 🛠 Clean rawText before parsing
+  // Clean rawText before parsing
   rawText = rawText
     .replace(/```json/g, "")
     .replace(/```/g, "")
@@ -88,7 +88,7 @@ Format strictly like this:
   try {
     parsed = JSON.parse(rawText);
   } catch (err) {
-    console.error("❌ Roadmap JSON parse failed:", err);
+    console.error("Roadmap JSON parse failed:", err);
 
     // Fallback: extract first valid JSON block using regex and sanitize
     const match = rawText.match(/\{[\s\S]*\}/);
@@ -100,7 +100,7 @@ Format strictly like this:
 
       parsed = cleaned ? JSON.parse(cleaned) : { steps: [] };
     } catch (fallbackErr) {
-      console.error("❌ Fallback parse also failed:", fallbackErr);
+      console.error("Fallback parse also failed:", fallbackErr);
       parsed = { steps: [] };
     }
   }
@@ -108,7 +108,7 @@ Format strictly like this:
   return { steps: parsed.steps || [], rawText };
 };
 
-// 🔹 API 1: Skill Gap Analysis
+// API 1: Skill Gap Analysis
 const analyzeSkillGap = async (req, res) => {
   try {
     const { targetRole, currentSkills } = req.body;
@@ -123,12 +123,12 @@ const analyzeSkillGap = async (req, res) => {
       gapAnalysis: gap || "No response from model",
     });
   } catch (err) {
-    console.error("❌ Skill gap error:", err);
+    console.error("Skill gap error:", err);
     res.status(500).json({ error: "Failed to analyze skill gap" });
   }
 };
 
-// 🔹 API 2: Roadmap Creation
+// API 2: Roadmap Creation
 const generateRoadmap = async (req, res) => {
   try {
     const { targetRole, currentSkills } = req.body;
@@ -163,7 +163,7 @@ const generateRoadmap = async (req, res) => {
 
     res.status(201).json({ success: true, roadmap });
   } catch (err) {
-    console.error("❌ Roadmap creation error:", err);
+    console.error("Roadmap creation error:", err);
     res.status(500).json({ error: "Failed to generate roadmap" });
   }
 };
