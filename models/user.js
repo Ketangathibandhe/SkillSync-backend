@@ -36,7 +36,29 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
-    
+    age: {
+      type: Number,
+      min: 18,
+      default: 18,
+    },
+    gender: {
+      type: String,
+
+      validate: function (value) {
+        const normalized = value?.toLowerCase();
+        if (!["male", "female", "other"].includes(normalized)) {
+          throw new Error("Gender data is not valid");
+        }
+      },
+    },
+    photoUrl: {
+      type: String,
+      default: "https://wallpapercave.com/wp/wp12696557.jpg",
+    },
+    about: {
+      type: String,
+      default: "I am using SkillSync app",
+    },
   },
   {
     timestamps: true,
