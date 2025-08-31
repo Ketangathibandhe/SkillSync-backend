@@ -6,12 +6,19 @@ const GEMINI_API_URL =
 
 // Helper: Skill Gap Analysis
 const getSkillGapFromModel = async (targetRole, currentSkills) => {
-  const prompt = `
-Analyze the skill gap for someone aiming to become a ${targetRole}.
+const prompt = `
+You're an expert career mentor helping someone become a ${targetRole}.
 Current skills: ${currentSkills.join(", ")}.
-List ONLY the missing skills and suggest learning priorities.
-- Give the answer in a clear, concise bullet-point format.
-- Start directly with the list of missing skills — no introduction, no extra sentences.
+
+Please return the response in clean Markdown format with clear structure:
+- Use plain text headings like:  Missing Skills and  Learning Priorities
+- Make each heading visually distinct 
+- Use simple numbered list (1., 2., etc.) for bullet points, no asterisks (*)
+- Use numbered list (1., 2., etc.) for priorities
+- Do NOT use markdown symbols like # or *
+- Do NOT include any intro or closing statements
+
+Respond only with Markdown. Keep it visually clean, readable, and scannable.
 `;
 
   const response = await fetch(
