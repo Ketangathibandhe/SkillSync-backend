@@ -175,7 +175,34 @@ const generateRoadmap = async (req, res) => {
   }
 };
 
+
+// API 3: Roadmap Fetch by ID
+const getRoadmapById = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    const roadmapId = req.params.id;
+
+    if (!userId || !roadmapId) {
+      return res.status(400).json({ error: "Missing userId or roadmapId" });
+    }
+
+    const roadmap = await Roadmap.findOne({ _id: roadmapId, userId });
+
+    if (!roadmap) {
+      return res.status(404).json({ error: "Roadmap not found" });
+    }
+
+    res.status(200).json({ roadmap });
+  } catch (err) {
+    console.error("Roadmap fetch by ID error:", err);
+    res.status(500).json({ error: "Failed to fetch roadmap" });
+  }
+};
+
+
 module.exports = {
   analyzeSkillGap,
   generateRoadmap,
+  getRoadmapById, //  new export
 };
+
