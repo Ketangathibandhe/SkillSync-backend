@@ -6,7 +6,7 @@ const GEMINI_API_URL =
 
 // Helper: Skill Gap Analysis
 const getSkillGapFromModel = async (targetRole, currentSkills) => {
-const prompt = `
+  const prompt = `
 You're an expert career mentor helping someone become a ${targetRole}.
 Current skills: ${currentSkills.join(", ")}.
 
@@ -70,7 +70,6 @@ Format strictly like this:
 }
 `;
 
-
   const response = await fetch(
     `${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY}`,
     {
@@ -101,10 +100,9 @@ Format strictly like this:
     const match = rawText.match(/\{[\s\S]*\}/);
     try {
       const cleaned = match?.[0]
-        ?.replace(/'/g, '"') // convert single quotes to double quotes
-        ?.replace(/,\s*}/g, "}") // remove trailing commas in objects
-        ?.replace(/,\s*]/g, "]"); // remove trailing commas in arrays
-
+        ?.replace(/'/g, '"')
+        ?.replace(/,\s*}/g, "}")
+        ?.replace(/,\s*]/g, "]");
       parsed = cleaned ? JSON.parse(cleaned) : { steps: [] };
     } catch (fallbackErr) {
       console.error("Fallback parse also failed:", fallbackErr);
@@ -159,6 +157,7 @@ const generateRoadmap = async (req, res) => {
       skillGap,
       steps,
       rawText,
+      progress: 0, //  initial progress
     });
 
     await roadmap.save();
@@ -174,7 +173,6 @@ const generateRoadmap = async (req, res) => {
     res.status(500).json({ error: "Failed to generate roadmap" });
   }
 };
-
 
 // API 3: Roadmap Fetch by ID
 const getRoadmapById = async (req, res) => {
@@ -199,10 +197,43 @@ const getRoadmapById = async (req, res) => {
   }
 };
 
+// API 4: All roadmaps for logged-in user (sidebar)
+const getUserRoadmaps = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const roadmaps = await Roadmap.find({ userId })
+      .select("_id targetRole progress createdAt updatedAt")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ roadmaps });
+  } catch (err) {
+    console.error("User roadmaps list error:", err);
+    res.status(500).json({ error: "Failed to fetch user roadmaps" });
+  }
+};
+
+// API 5: Latest roadmap for logged-in user (default load)
+const getLatestRoadmap = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const roadmap = await Roadmap.findOne({ userId }).sort({ createdAt: -1 });
+    if (!roadmap) return res.status(404).json({ error: "No roadmaps found" });
+
+    res.status(200).json({ roadmap });
+  } catch (err) {
+    console.error("Latest roadmap fetch error:", err);
+    res.status(500).json({ error: "Failed to fetch latest roadmap" });
+  }
+};
 
 module.exports = {
   analyzeSkillGap,
   generateRoadmap,
-  getRoadmapById, //  new export
+  getRoadmapById,
+  getUserRoadmaps,   
+  getLatestRoadmap,  
 };
-

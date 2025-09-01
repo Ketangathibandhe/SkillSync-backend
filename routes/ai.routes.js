@@ -3,7 +3,9 @@ const { userAuth } = require("../middleware/auth");
 const {
   analyzeSkillGap,
   generateRoadmap,
-  getRoadmapById, // new controller
+  getRoadmapById,
+  getUserRoadmaps,   // 👈 new controller
+  getLatestRoadmap,  // 👈 new controller
 } = require("../controllers/skillController");
 
 const router = express.Router();
@@ -14,8 +16,13 @@ router.post("/skill-gap", userAuth, analyzeSkillGap);
 // Roadmap Generation
 router.post("/roadmap", userAuth, generateRoadmap);
 
-// Roadmap Fetch (for /roadmap page refresh)
+// Roadmap Fetch by ID (detail view)
 router.get("/roadmap/:id", userAuth, getRoadmapById);
 
+//  All roadmaps for logged-in user (sidebar list)
+router.get("/roadmaps", userAuth, getUserRoadmaps);
+
+//  Latest roadmap for logged-in user (default load)
+router.get("/roadmaps/latest", userAuth, getLatestRoadmap);
 
 module.exports = router;
