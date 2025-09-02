@@ -25,10 +25,6 @@ profileRouter.post("/add-skills", userAuth, async (req, res) => {
   }
 });
 
-
-
-
-
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
@@ -51,8 +47,7 @@ profileRouter.put("/profile/edit", userAuth, async (req, res) => {
       message: "Profile updated successfully",
       data: loggedInUser,
     });
-      console.log('Incoming PUT /profile/edit request:', req.body);
-
+    console.log("Incoming PUT /profile/edit request:", req.body);
   } catch (err) {
     res.status(400).send("Error :" + err.message);
   }

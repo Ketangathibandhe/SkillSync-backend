@@ -259,6 +259,40 @@ const deleteRoadmapById = async (req, res) => {
   }
 };
 
+// API 7: Update step status & recalc progress
+const updateStepStatus = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    const { roadmapId, stepIndex, status } = req.body;
+
+    if (!userId || roadmapId == null || stepIndex == null || !status) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const roadmap = await Roadmap.findOne({ _id: roadmapId, userId });
+    if (!roadmap) {
+      return res.status(404).json({ error: "Roadmap not found" });
+    }
+
+    // Update step status
+    if (!roadmap.steps[stepIndex]) {
+      return res.status(400).json({ error: "Invalid step index" });
+    }
+    roadmap.steps[stepIndex].status = status;
+
+    // Recalculate progress
+    const totalSteps = roadmap.steps.length;
+    const completedSteps = roadmap.steps.filter(s => s.status === "completed").length;
+    roadmap.progress = Math.round((completedSteps / totalSteps) * 100);
+
+    await roadmap.save();
+
+    res.status(200).json({ success: true, roadmap });
+  } catch (err) {
+    console.error("Update step status error:", err);
+    res.status(500).json({ error: "Failed to update step status" });
+  }
+};
 
 module.exports = {
   analyzeSkillGap,
@@ -266,5 +300,6 @@ module.exports = {
   getRoadmapById,
   getUserRoadmaps,   
   getLatestRoadmap,
-  deleteRoadmapById
+  deleteRoadmapById,
+  updateStepStatus
 };

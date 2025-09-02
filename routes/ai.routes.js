@@ -6,7 +6,8 @@ const {
   getRoadmapById,
   getUserRoadmaps,
   getLatestRoadmap,
-  deleteRoadmapById, // new controller import
+  deleteRoadmapById, 
+  updateStepStatus
 } = require("../controllers/skillController");
 
 const router = express.Router();
@@ -29,4 +30,6 @@ router.get("/roadmaps/latest", userAuth, getLatestRoadmap);
 // Delete roadmap by ID
 router.delete("/roadmap/:id", userAuth, deleteRoadmapById);
 
+
+router.put("/roadmap/step-status", userAuth, updateStepStatus);
 module.exports = router;
