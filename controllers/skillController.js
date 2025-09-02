@@ -230,10 +230,41 @@ const getLatestRoadmap = async (req, res) => {
   }
 };
 
+// API 6: Delete roadmap by ID
+const deleteRoadmapById = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    const roadmapId = req.params.id;
+
+    if (!userId || !roadmapId) {
+      return res.status(400).json({ error: "Missing userId or roadmapId" });
+    }
+
+    // Find and delete roadmap owned by this user
+    const roadmap = await Roadmap.findOneAndDelete({ _id: roadmapId, userId });
+
+    if (!roadmap) {
+      return res.status(404).json({ error: "Roadmap not found" });
+    }
+
+    // Remove roadmap reference from User document
+    await User.findByIdAndUpdate(userId, {
+      $pull: { roadmaps: roadmapId },
+    });
+
+    res.status(200).json({ success: true, message: "Roadmap deleted successfully" });
+  } catch (err) {
+    console.error("Roadmap delete error:", err);
+    res.status(500).json({ error: "Failed to delete roadmap" });
+  }
+};
+
+
 module.exports = {
   analyzeSkillGap,
   generateRoadmap,
   getRoadmapById,
   getUserRoadmaps,   
-  getLatestRoadmap,  
+  getLatestRoadmap,
+  deleteRoadmapById
 };

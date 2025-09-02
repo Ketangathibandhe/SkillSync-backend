@@ -4,8 +4,9 @@ const {
   analyzeSkillGap,
   generateRoadmap,
   getRoadmapById,
-  getUserRoadmaps,   // 👈 new controller
-  getLatestRoadmap,  // 👈 new controller
+  getUserRoadmaps,
+  getLatestRoadmap,
+  deleteRoadmapById, // new controller import
 } = require("../controllers/skillController");
 
 const router = express.Router();
@@ -19,10 +20,13 @@ router.post("/roadmap", userAuth, generateRoadmap);
 // Roadmap Fetch by ID (detail view)
 router.get("/roadmap/:id", userAuth, getRoadmapById);
 
-//  All roadmaps for logged-in user (sidebar list)
+// All roadmaps for logged-in user (sidebar list)
 router.get("/roadmaps", userAuth, getUserRoadmaps);
 
-//  Latest roadmap for logged-in user (default load)
+// Latest roadmap for logged-in user (default load)
 router.get("/roadmaps/latest", userAuth, getLatestRoadmap);
+
+// Delete roadmap by ID
+router.delete("/roadmap/:id", userAuth, deleteRoadmapById);
 
 module.exports = router;
